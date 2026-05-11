@@ -1,0 +1,39 @@
+name: Publish to npmjs.org
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - name: Verify bundle size ≤10kb gzipped
+        run: |
+          SIZE=$(gzip -c dist/index.global.js | wc -c)
+          echo "IIFE bundle gzipped: ${SIZE} bytes"
+          if [ "$SIZE" -gt 10240 ]; then
+            echo "ERROR: bundle exceeds 10kb budget" >&2
+            exit 1
+          fi
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --no-git-checks --access public

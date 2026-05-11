@@ -1,0 +1,56 @@
+{
+	"name": "@theg1team/g1-network-js",
+	"version": "0.1.0",
+	"description": "g1.network lightweight ad SDK для non-Prebid publishers. ~10kb gzipped browser wrapper that requests bids от g1.network SSP и renders winning ads via SafeFrame 2.0 iframes. OSS MIT.",
+	"keywords": ["g1-network", "ssp", "ad-sdk", "header-bidding-lite", "safeframe", "ads", "openrtb"],
+	"author": "The G1 Team <adops@g1.network>",
+	"license": "MIT",
+	"homepage": "https://oss.g1.network/g1-network-js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/TheG1Team/g1-network-js.git"
+	},
+	"bugs": {
+		"url": "https://github.com/TheG1Team/g1-network-js/issues"
+	},
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"unpkg": "./dist/index.global.js",
+	"jsdelivr": "./dist/index.global.js",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"files": ["dist", "README.md", "LICENSE"],
+	"sideEffects": false,
+	"scripts": {
+		"build": "tsup src/index.ts --format esm,cjs,iife --global-name g1Network --dts --clean --target es2020 --minify",
+		"dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"prepublishOnly": "pnpm build",
+		"size": "pnpm build && ls -la dist/index.global.js && gzip -c dist/index.global.js | wc -c"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"happy-dom": "^15.0.0",
+		"tsup": "^8.0.0",
+		"typescript": "^5.7.0",
+		"vitest": "^2.1.0"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	},
+	"packageManager": "pnpm@10.33.0"
+}
